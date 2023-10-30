@@ -15,9 +15,21 @@ document.addEventListener('DOMContentLoaded', function() {
         interval = setInterval(function() {
             timer--;
             timerEl.textContent = timer;
-            if (timer <= 0) {
+            if (timer <= 0 || currentQuesion > 5) {
                 endQuiz();
             }
         }, 1000);
+    }
+
+    function showNextQuestion() {
+        var currentQuestionDiv = document.getElementById('question' + currentQuesion);
+        currentQuestionDiv.style.display = 'none';
+        currentQuesion++;
+        if (currentQuesion <= 5) {
+            var nextQuestionDiv = document.getElementById('question' + currentQuesion);
+            nextQuestionDiv.style.display = 'block';
+        } else {
+            endQuiz();
+        }
     }
 })
