@@ -11,7 +11,6 @@ document.addEventListener('DOMContentLoaded', function() {
     var timer = 60;
     var currentQuestion = 1;
     var interval;
-    var correctAnswers = 0;
 
     function startTimer() {
         interval = setInterval(function() {
@@ -47,11 +46,23 @@ document.addEventListener('DOMContentLoaded', function() {
         var scoreData = JSON.parse(localStorage.getItem('scores')) || [];
         scoreData.push({ initials: initials, score: 60 - timer });
         localStorage.setItem('scores', JSON.stringify(scoreData));
+        
         for (var i = 0; i < scoreData.length; i++) {
             var li = document.createElement('li');
             li.textContent = scoreData[i].initials + ' - ' + scoreData[i].score + ' seconds ';
             scoresList.appendChild(li);
         }
+        
+        // Add a "Return to Quiz" button on the leaderboard page
+        var returnButton = document.createElement('button');
+        returnButton.textContent = 'Return to Quiz';
+        returnButton.id = 'return-btn';
+        scoresList.appendChild(returnButton);
+        
+        // Add event listener for return button
+        returnButton.addEventListener('click', function() {
+            window.location.href = 'index.html'; // Redirect to quiz page
+        });
     }
 
     startButton.addEventListener('click', function() {
