@@ -60,3 +60,9 @@ main {
 .hidden {
     display: none;
 }
+
+.answer-feedback {
+    color: red;
+    font-weight: bold;
+    margin-top: 10px;
+}

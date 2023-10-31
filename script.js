@@ -51,17 +51,44 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function showNextQuestion() {
         var currentQuestionDiv = document.getElementById('question' + currentQuestion);
-        currentQuestionDiv.style.display = 'none';
-        currentQuestion++;
-        if (currentQuestion < questions.length) {
-            var nextQuestionDiv = createQuestionDiv(currentQuestion);
-            quizQuestions.appendChild(nextQuestionDiv);
-            nextQuestionDiv.style.display = 'block'; // Add this line
-        } else {
-            endQuiz();
+        
+        var selectedOption = currentQuestionDiv.querySelector(`input[name="q${currentQuestion + 1}"]:checked`);
+        if (!selectedOption) {
+            alert("Please select an answer.");
+            return;
         }
+
+        var previousFeedback = currentQuestionDiv.querySelector('.answer-feedback');
+        if (previousFeedback) {
+            previousFeedback.remove();
+        }
+
+        if (selectedOption.value === questions[currentQuestion].answer) {
+            var feedback = document.createElement('div');
+            feedback.className = 'answer-feedback';
+            feedback.textContent = "Correct!";
+            currentQuestionDiv.appendChild(feedback);
+        } else {
+            var feedback = document.createElement('div');
+            feedback.className = 'answer-feedback';
+            feedback.textContent = "Wrong!";
+            currentQuestionDiv.appendChild(feedback);
+            timer -= 10;
+            if (timer < 0) timer = 0;
+            timerEl.textContent = timer;
+        }
+
+        setTimeout(function() {
+            currentQuestionDiv.style.display = 'none';
+            currentQuestion++;
+            if (currentQuestion < questions.length) {
+                var nextQuestionDiv = createQuestionDiv(currentQuestion);
+                quizQuestions.appendChild(nextQuestionDiv);
+            } else {
+                endQuiz();
+            }
+        }, 1000);
     }
-    
 
     function createQuestionDiv(index) {
         var questionDiv = document.createElement('div');
@@ -107,7 +134,7 @@ document.addEventListener('DOMContentLoaded', function() {
         scoresList.appendChild(returnButton);
 
         returnButton.addEventListener('click', function() {
-            location.reload(); // Reload the page to start the quiz again
+            location.reload(); 
         });
     }
 
@@ -116,10 +143,10 @@ document.addEventListener('DOMContentLoaded', function() {
         quizContainer.style.display = 'block';
         var firstQuestionDiv = createQuestionDiv(0);
         quizQuestions.appendChild(firstQuestionDiv);
-        firstQuestionDiv.style.display = 'block'; // Add this line
+        firstQuestionDiv.style.display = 'block';
         startTimer();
     });
-    
+
     scoreForm.addEventListener('submit', submitScore);
     quizQuestions.addEventListener('click', function(event) {
         if (event.target.classList.contains('next-btn')) {
