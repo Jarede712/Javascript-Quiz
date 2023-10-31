@@ -41,6 +41,9 @@ main {
 #leaderboard {
     margin-top: 20px;
     background-color: aqua;
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 5px;
 }
 
 #scores {

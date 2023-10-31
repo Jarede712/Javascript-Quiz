@@ -39,6 +39,15 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     ];
 
+    function loadScores() {
+        var scoreData = JSON.parse(localStorage.getItem('scores')) || [];
+        scoresList.innerHTML = scoreData.map(data => `
+            <li>${data.initials} - ${data.score} seconds</li>
+        `).join('');
+    }
+    
+    loadScores();
+
     function startTimer() {
         interval = setInterval(function() {
             timer--;
@@ -112,32 +121,43 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function endQuiz() {
         clearInterval(interval);
-        quizContainer.style.display = 'none';
-        leaderboard.style.display = 'block';
+        
+        if(!quizContainer) {
+            console.error("Error: quizContainer is null or not found!");
+        } else {
+            quizContainer.style.display = 'hidden';
+        }
+        
+        if(!leaderboard) {
+            console.error("Error: leaderboard is null or not found!");
+        } else {
+            leaderboard.classList.remove('hidden'); // Remove the 'hidden' class
+            leaderboard.style.display = 'block';
+        }
     }
+    
 
     function submitScore(event) {
         event.preventDefault();
         var initials = initialsInput.value;
         var score = timer;
-
+    
         var scoreData = JSON.parse(localStorage.getItem('scores')) || [];
         scoreData.push({ initials: initials, score: score });
         localStorage.setItem('scores', JSON.stringify(scoreData));
-
-        scoresList.innerHTML = scoreData.map(data => `
-            <li>${data.initials} - ${data.score} seconds</li>
-        `).join('');
-
+    
+        loadScores(); // call loadScores to update the leaderboard
+    
         var returnButton = document.createElement('button');
         returnButton.textContent = 'Return to Quiz';
         returnButton.id = 'return-btn';
         scoresList.appendChild(returnButton);
-
+    
         returnButton.addEventListener('click', function() {
-            location.reload();
+            location.reload(); // Reload the page to start the quiz again
         });
     }
+    
 
     startButton.addEventListener('click', function() {
         startButton.style.display = 'none';
