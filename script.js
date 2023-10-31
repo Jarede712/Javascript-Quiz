@@ -9,14 +9,22 @@ document.addEventListener('DOMContentLoaded', function() {
     var startButton = document.getElementById('start-quiz');
 
     var timer = 60;
-    var currentQuestion = 1;
+    var currentQuestion = 0;
     var interval;
+    var questions = [
+        {
+            question: "Commonly used data types DO NOT include:",
+            options: ["strings", "booleans", "alerts", "numbers"],
+            answer: "c"
+        },
+        // Add more questions in a similar format
+    ];
 
     function startTimer() {
         interval = setInterval(function() {
             timer--;
             timerEl.textContent = timer;
-            if (currentQuestion > 5 || timer <= 0) {
+            if (timer <= 0) {
                 endQuiz();
             }
         }, 1000);
@@ -26,12 +34,31 @@ document.addEventListener('DOMContentLoaded', function() {
         var currentQuestionDiv = document.getElementById('question' + currentQuestion);
         currentQuestionDiv.style.display = 'none';
         currentQuestion++;
-        if (currentQuestion <= 5) {
-            var nextQuestionDiv = document.getElementById('question' + currentQuestion);
-            nextQuestionDiv.style.display = 'block';
+        if (currentQuestion < questions.length) {
+            var nextQuestionDiv = createQuestionDiv(currentQuestion);
+            quizQuestions.appendChild(nextQuestionDiv);
         } else {
             endQuiz();
         }
+    }
+
+    function createQuestionDiv(index) {
+        var questionDiv = document.createElement('div');
+        questionDiv.classList.add('question');
+        questionDiv.id = 'question' + index;
+        questionDiv.innerHTML = `
+            <h2>Question ${index + 1}</h2>
+            <p>${questions[index].question}</p>
+            ${questions[index].options.map(option => `
+                <label>
+                    <input type="radio" name="q${index + 1}" value="${option.toLowerCase()}">
+                    ${option}
+                </label><br>
+            `).join('')}
+            <button class="next-btn">Next</button>
+        `;
+        questionDiv.style.display = 'none';
+        return questionDiv;
     }
 
     function endQuiz() {
@@ -43,32 +70,31 @@ document.addEventListener('DOMContentLoaded', function() {
     function submitScore(event) {
         event.preventDefault();
         var initials = initialsInput.value;
+        var score = timer;
+
         var scoreData = JSON.parse(localStorage.getItem('scores')) || [];
-        scoreData.push({ initials: initials, score: 60 - timer });
+        scoreData.push({ initials: initials, score: score });
         localStorage.setItem('scores', JSON.stringify(scoreData));
-        
-        for (var i = 0; i < scoreData.length; i++) {
-            var li = document.createElement('li');
-            li.textContent = scoreData[i].initials + ' - ' + scoreData[i].score + ' seconds ';
-            scoresList.appendChild(li);
-        }
-        
-        // Add a "Return to Quiz" button on the leaderboard page
+
+        scoresList.innerHTML = scoreData.map(data => `
+            <li>${data.initials} - ${data.score} seconds</li>
+        `).join('');
+
         var returnButton = document.createElement('button');
         returnButton.textContent = 'Return to Quiz';
         returnButton.id = 'return-btn';
         scoresList.appendChild(returnButton);
-        
-        // Add event listener for return button
+
         returnButton.addEventListener('click', function() {
-            window.location.href = 'index.html'; // Redirect to quiz page
+            location.reload(); // Reload the page to start the quiz again
         });
     }
 
     startButton.addEventListener('click', function() {
         startButton.style.display = 'none';
         quizContainer.style.display = 'block';
-        document.getElementById('question1').style.display = 'block';
+        var firstQuestionDiv = createQuestionDiv(0);
+        quizQuestions.appendChild(firstQuestionDiv);
         startTimer();
     });
 
