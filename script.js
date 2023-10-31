@@ -15,27 +15,27 @@ document.addEventListener('DOMContentLoaded', function() {
         {
             question: "Commonly used data types DO NOT include:",
             options: ["strings", "booleans", "alerts", "numbers"],
-            answer: "c"
+            answer: "alerts"
         },
         {
             question: "The condition in an if / else statement is enclosed within ____.",
             options: ["quotes", "curly brackets", "parenthesis", "square brackets"],
-            answer: "c"
+            answer: "parenthesis"
         },
         {
             question: "Arrays in Javascript can be used to store ____.",
             options: ["numbers and strings", "other arrays", "booleans", "all of the above"],
-            answer: "d"
+            answer: "all of the above"
         },
         {
             question: "String values must be enclosed within _____ when being assigned to variables.",
             options: ["commas", "curly brackets", "quotes", "parenthesis"],
-            answer: "c"
+            answer: "quotes"
         },
         {
             question: "A very useful tool used during development and debugging for printing content to the debugger is:",
             options: ["JavaScript", "terminal/bash", "for loops", "console.log"],
-            answer: "d"
+            answer: "console.log"
         }
     ];
 
@@ -51,42 +51,43 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function showNextQuestion() {
         var currentQuestionDiv = document.getElementById('question' + currentQuestion);
-        
-        var selectedOption = currentQuestionDiv.querySelector(`input[name="q${currentQuestion + 1}"]:checked`);
-        if (!selectedOption) {
-            alert("Please select an answer.");
-            return;
+        var selectedOption = currentQuestionDiv.querySelector('input[type="radio"]:checked');
+    
+        if (selectedOption) {
+            if (selectedOption.value !== questions[currentQuestion].answer) {
+                displayAlert('Wrong!', currentQuestionDiv);
+                timer -= 10;
+                if (timer < 0) timer = 0;
+            } else {
+                displayAlert('Correct!', currentQuestionDiv);
+            }
+    
+            setTimeout(function() {
+                currentQuestionDiv.style.display = 'none';
+                currentQuestion++;
+    
+                if (currentQuestion < questions.length) {
+                    var nextQuestionDiv = createQuestionDiv(currentQuestion);
+                    quizQuestions.appendChild(nextQuestionDiv);
+                    nextQuestionDiv.style.display = 'block';
+                } else {
+                    endQuiz();
+                }
+            }, 1000); 
         }
+    }
+    
 
-        var previousFeedback = currentQuestionDiv.querySelector('.answer-feedback');
-        if (previousFeedback) {
-            previousFeedback.remove();
-        }
+    function displayAlert(message, parentDiv) {
+        var alertDiv = document.createElement('div');
+        alertDiv.textContent = message;
+        alertDiv.style.color = (message === 'Correct!') ? 'green' : 'red';
+        alertDiv.style.marginTop = '10px';
 
-        if (selectedOption.value === questions[currentQuestion].answer) {
-            var feedback = document.createElement('div');
-            feedback.className = 'answer-feedback';
-            feedback.textContent = "Correct!";
-            currentQuestionDiv.appendChild(feedback);
-        } else {
-            var feedback = document.createElement('div');
-            feedback.className = 'answer-feedback';
-            feedback.textContent = "Wrong!";
-            currentQuestionDiv.appendChild(feedback);
-            timer -= 10;
-            if (timer < 0) timer = 0;
-            timerEl.textContent = timer;
-        }
+        parentDiv.appendChild(alertDiv);
 
         setTimeout(function() {
-            currentQuestionDiv.style.display = 'none';
-            currentQuestion++;
-            if (currentQuestion < questions.length) {
-                var nextQuestionDiv = createQuestionDiv(currentQuestion);
-                quizQuestions.appendChild(nextQuestionDiv);
-            } else {
-                endQuiz();
-            }
+            parentDiv.removeChild(alertDiv);
         }, 1000);
     }
 
@@ -134,7 +135,7 @@ document.addEventListener('DOMContentLoaded', function() {
         scoresList.appendChild(returnButton);
 
         returnButton.addEventListener('click', function() {
-            location.reload(); 
+            location.reload();
         });
     }
 
