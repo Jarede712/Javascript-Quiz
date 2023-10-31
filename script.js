@@ -56,10 +56,12 @@ document.addEventListener('DOMContentLoaded', function() {
         if (currentQuestion < questions.length) {
             var nextQuestionDiv = createQuestionDiv(currentQuestion);
             quizQuestions.appendChild(nextQuestionDiv);
+            nextQuestionDiv.style.display = 'block'; // Add this line
         } else {
             endQuiz();
         }
     }
+    
 
     function createQuestionDiv(index) {
         var questionDiv = document.createElement('div');
@@ -114,9 +116,10 @@ document.addEventListener('DOMContentLoaded', function() {
         quizContainer.style.display = 'block';
         var firstQuestionDiv = createQuestionDiv(0);
         quizQuestions.appendChild(firstQuestionDiv);
+        firstQuestionDiv.style.display = 'block'; // Add this line
         startTimer();
     });
-
+    
     scoreForm.addEventListener('submit', submitScore);
     quizQuestions.addEventListener('click', function(event) {
         if (event.target.classList.contains('next-btn')) {
